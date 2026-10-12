@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "JobTracker@123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+
+  backend:
+    build: ./backend-dotnet
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=db;Database=JobTrackerDb;User=sa;Password=JobTracker@123;TrustServerCertificate=True
+      - Jwt__Secret=super-secret-key-min-32-characters-here
+      - AWS__BucketName=job-tracker-resumes
+      - AWS__Region=ap-south-1
+      - AiService__BaseUrl=http://ai-service:8000
+    depends_on:
+      - db
+
+  ai-service:
+    build: ./ai-service
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}

@@ -1,0 +1,5 @@
+# boto3 is pre-installed in Lambda runtime — no need to bundle it
+# Only add extra deps here if you extend the handler
+
+# Example: if you add PyPDF2 for PDF text extraction:
+# PyPDF2==3.0.1
